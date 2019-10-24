@@ -1,10 +1,9 @@
-package org.bees.optimizer.server;
+package org.bees.optimizer.knapsack;
 
 import lombok.Getter;
 import org.bees.optimizer.model.external.PointDto;
 import org.bees.optimizer.model.external.PointsDto;
 import org.bees.optimizer.model.external.RoutesDto;
-import org.bees.optimizer.model.external.TrafficDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,14 +12,11 @@ import java.util.Map;
 public class Cacher {
     private RoutesDto routesDto;
     private PointsDto pointsDto;
-    private TrafficDto trafficDto;
+    private Map<Integer, PointDto> intPointMap = new HashMap<>();
 
-    Map<Integer, PointDto> intPointMap = new HashMap<>();
-
-    public Cacher(RoutesDto routesDto, PointsDto pointsDto, TrafficDto trafficDto) {
+    public Cacher(RoutesDto routesDto, PointsDto pointsDto) {
         this.routesDto = routesDto;
         this.pointsDto = pointsDto;
-        this.trafficDto = trafficDto;
 
         createRoutePointCache();
     }

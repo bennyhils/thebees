@@ -14,10 +14,10 @@ public class TimeKnapsackTest {
 
     private static List<SackPoint> getPointList() {
         List<SackPoint> sackPointList = new ArrayList<>();
-        sackPointList.add(new SackPoint("A", 100, 5));
-        sackPointList.add(new SackPoint("B", 20, 4));
-        sackPointList.add(new SackPoint("C", 30, 1));
-        sackPointList.add(new SackPoint("D", 15, 1));
+//        sackPointList.add(new SackPoint("A", 100, 5));
+//        sackPointList.add(new SackPoint("B", 20, 4));
+//        sackPointList.add(new SackPoint("C", 30, 1));
+//        sackPointList.add(new SackPoint("D", 15, 1));
 
         return sackPointList;
     }

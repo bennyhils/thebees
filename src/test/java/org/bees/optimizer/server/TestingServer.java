@@ -7,6 +7,8 @@ import org.bees.optimizer.knapsack.SackPoint;
 import org.bees.optimizer.knapsack.TimeKnapsack;
 import org.bees.optimizer.knapsack.TimeKnapsack.Find;
 import org.bees.optimizer.model.external.*;
+import org.bees.optimizer.knapsack.Cacher;
+import org.bees.optimizer.knapsack.PointExtractor;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -37,23 +39,7 @@ public class TestingServer {
     }
 
     private void start() throws IOException {
-        RoutesDto routesDto = mapper.readValue(getRoutes(), RoutesDto.class);
-        PointsDto pointsDto = mapper.readValue(getPoints(), PointsDto.class);
-        TrafficDto trafficDto = mapper.readValue(getTraffic(), TrafficDto.class);
 
-        Cacher cacher = new Cacher(routesDto, pointsDto, trafficDto);
-        PointExtractor pointExtractor = new PointExtractor(cacher);
-
-        Stack<Integer> pointStack = new Stack<>();
-        pointStack.add(0);
-
-        List<SackPoint> sackPoints = pointExtractor.extractPoints(routesDto, pointsDto, trafficDto, 3, pointStack);
-        for (SackPoint sackPoint : sackPoints) {
-            System.out.println(sackPoint);
-        }
-
-        Find find = TimeKnapsack.find(sackPoints, 60);
-        find.display();
     }
 
 }

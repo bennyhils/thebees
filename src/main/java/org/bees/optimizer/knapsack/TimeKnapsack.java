@@ -62,5 +62,8 @@ public class TimeKnapsack {
             }
         }
 
+        public SackPoint getOne() {
+            return sackPointList.get(0);
+        }
     }
 }

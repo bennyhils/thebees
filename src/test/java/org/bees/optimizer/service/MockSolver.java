@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-@Service
 public class MockSolver implements Solver {
 
     private WebSocketHandler server;

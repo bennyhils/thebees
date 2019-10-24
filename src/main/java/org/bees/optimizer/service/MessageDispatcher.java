@@ -2,6 +2,7 @@ package org.bees.optimizer.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.bees.optimizer.knapsack.SackSolver;
 import org.bees.optimizer.model.external.ArriveDto;
 import org.bees.optimizer.model.external.OverallSum;
 import org.bees.optimizer.model.external.PointsDto;
@@ -18,10 +19,10 @@ import java.io.IOException;
 public class MessageDispatcher {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private Solver solver;
+    private SackSolver solver;
 
     @Autowired
-    public void setSolver(Solver solver) {
+    public void setSolver(SackSolver solver) {
         this.solver = solver;
     }
 

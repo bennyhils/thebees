@@ -35,26 +35,12 @@ public class ModelGeneratorTest {
 
     @Test
     public void validateInitialTrafficGenerator() {
-        TrafficDto trafficDto = ModelGenerator.generateTraffic(500, true);
+        TrafficDto trafficDto = ModelGenerator.generateTraffic(500);
 
         Assert.assertEquals(500 * 501 / 2, trafficDto.getTraffic().size());
 
         trafficDto.getTraffic()
                   .forEach(trafficJamDto -> Assert.assertEquals(1.5, trafficJamDto.getJam(), 0.5));
-    }
-
-    @Test
-    public void validateTrafficGenerator() {
-        TrafficDto trafficDto = ModelGenerator.generateTraffic(500);
-
-        Assert.assertEquals(500 * 499 / 2, trafficDto.getTraffic().size());
-
-        trafficDto.getTraffic()
-                  .forEach(trafficJamDto -> {
-                      Assert.assertEquals(1.5, trafficJamDto.getJam(), 0.5);
-                      Assert.assertTrue(trafficJamDto.getFrom() != 0);
-                      Assert.assertTrue(trafficJamDto.getTo() != 0);
-                  });
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.bees.optimizer.model.external.RouteDto;
 import org.bees.optimizer.model.external.RoutesDto;
 import org.bees.optimizer.model.external.TrafficDto;
 import org.bees.optimizer.model.external.TrafficJamDto;
+import org.bees.optimizer.model.internal.Car;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -65,33 +66,20 @@ public class ModelGenerator {
      * @param numPoints количество точек, не включая начальную
      * @param minVal    минимальный коэф пробки
      * @param maxVal    максимальный коэф пробки
-     * @param isInitial флаг инициализирующего трафика
      * @return          дто с пробками
      */
     public static TrafficDto generateTraffic(
             int numPoints,
             double minVal,
-            double maxVal,
-            boolean isInitial
+            double maxVal
     ) {
         List<TrafficJamDto> generatedTraffic = new LinkedList<>();
-        IntStream.rangeClosed(isInitial ? 0 : 1, numPoints - 1).forEach(i -> {
+        IntStream.rangeClosed(0, numPoints - 1).forEach(i -> {
             IntStream.rangeClosed(i + 1, numPoints).forEach(j -> {
                 generatedTraffic.add(new TrafficJamDto(i, j, nextBoundedDouble(minVal, maxVal)));
             });
         });
         return new TrafficDto(generatedTraffic);
-    }
-
-    /**
-     * Генерация трафика.
-     *
-     * @param numPoints количество точек, не включая начальную
-     * @param isInitial флаг инициализирующего трафика
-     * @return          дто с пробками
-     */
-    public static TrafficDto generateTraffic(int numPoints, boolean isInitial) {
-        return generateTraffic(numPoints, 1.0, 2.0, isInitial);
     }
 
     /**
@@ -101,7 +89,7 @@ public class ModelGenerator {
      * @return          дто с пробками
      */
     public static TrafficDto generateTraffic(int numPoints) {
-        return generateTraffic(numPoints, 1.0, 2.0, false);
+        return generateTraffic(numPoints, 1.0, 2.0);
     }
 
     /**
@@ -124,6 +112,15 @@ public class ModelGenerator {
             });
         });
         return new RoutesDto(generatedRoutes);
+    }
+
+    public static List<Car> generateCars(int numCars) {
+        List<Car> generatedCars = new LinkedList<>();
+        IntStream.rangeClosed(0, numCars -1).forEach(value -> {
+            generatedCars.add(new Car(1000000, "test-" + value));
+        });
+
+        return generatedCars;
     }
 
 }

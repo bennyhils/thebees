@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class SackSolver implements Solver {
-    private RoutesDto routesDto;
+    private List<RouteDto> routesDto;
+    private List<TrafficJamDto> trafficDtoList;
     private ArriveDto arriveDto;
     private OverallSum overallSum;
     private TokenDto tokenDto;
@@ -27,7 +32,7 @@ public class SackSolver implements Solver {
 
     @Autowired
     private WebSocketHandler handler;
-    private Integer gotoPoint = 0;
+    private Integer gotoPoint = 40;
 
 
     @Override
@@ -37,12 +42,16 @@ public class SackSolver implements Solver {
 
     @Override
     public void processTraffic(TrafficDto trafficDto) {
+        trafficDtoList = trafficDto.getTraffic();
+
         if (cacher == null) {
             cacher = new Cacher(routesDto, pointsDto);
         }
 
+        invertDtosIfNeeded();
+
         if (depthCount % DEPTH == 0) {
-            getNewRoute(trafficDto);
+            getNewRoute(trafficDtoList);
         }
 
         try {
@@ -65,7 +74,20 @@ public class SackSolver implements Solver {
         }
     }
 
-    private void getNewRoute(TrafficDto trafficDto) {
+    private void invertDtosIfNeeded() {
+        List<RouteDto> collect = routesDto.stream().filter(routeDto -> routeDto.getFrom() == gotoPoint).collect(Collectors.toList());
+        if (collect.isEmpty()) {
+            routesDto = routesDto
+                    .stream()
+                    .map(routeDto -> new RouteDto(routeDto.getTo(), routeDto.getFrom(), routeDto.getTime())).collect(Collectors.toList());
+
+            trafficDtoList = trafficDtoList
+                    .stream()
+                    .map(trafficJamDto -> new TrafficJamDto(trafficJamDto.getTo(), trafficJamDto.getFrom(), trafficJamDto.getJam())).collect(Collectors.toList());
+        }
+    }
+
+    private void getNewRoute(List<TrafficJamDto> trafficDto) {
         depthCount = 0;
 
         // петли в графах
@@ -83,7 +105,7 @@ public class SackSolver implements Solver {
 
     @Override
     public void processRoutes(RoutesDto routesDto) {
-        this.routesDto = routesDto;
+        this.routesDto = routesDto.getRoutes();
     }
 
     @Override
@@ -101,7 +123,7 @@ public class SackSolver implements Solver {
         this.tokenDto = tokenDto;
     }
 
-    private List<SackPoint> getSackPoints(TrafficDto trafficDto, PointExtractor pointExtractor, Stack<Integer> pointStack) {
+    private List<SackPoint> getSackPoints(List<TrafficJamDto> trafficDto, PointExtractor pointExtractor, Stack<Integer> pointStack) {
         List<SackPoint> sackPointList = pointExtractor.extractPoints(routesDto, pointsDto, trafficDto, DEPTH, pointStack);
         for (SackPoint sackPoint : sackPointList) {
             log.debug(sackPoint.toString());

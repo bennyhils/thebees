@@ -15,9 +15,9 @@ public class PointExtractor {
     private int fromPoint;
 
     public List<SackPoint> extractPoints(
-            RoutesDto routesDto,
+            List<RouteDto> routesDto,
             PointsDto pointsDto,
-            TrafficDto trafficDto,
+            List<TrafficJamDto> trafficDto,
             int depth,
             Stack<Integer> pointStack
     ) {
@@ -26,8 +26,8 @@ public class PointExtractor {
                         filterByFirstPoint(routesDto, pointStack), trafficDto), pointsDto, new ArrayList<>(), depth, pointStack);
     }
 
-    private List<RouteDto> filterByFirstPoint(RoutesDto routesDto, Stack<Integer> pointStack) {
-        return routesDto.getRoutes().stream().filter(routeDto -> routeDto.getFrom() == pointStack.peek()).collect(Collectors.toList());
+    private List<RouteDto> filterByFirstPoint(List<RouteDto> routesDto, Stack<Integer> pointStack) {
+        return routesDto.stream().filter(routeDto -> routeDto.getFrom() == pointStack.peek()).collect(Collectors.toList());
     }
 
     public List<SackPoint> extractPointsInner(
@@ -80,12 +80,13 @@ public class PointExtractor {
     }
 
     // TODO map in stream
-    private List<RouteDto> getJamedRouteDtoList(List<RouteDto> routeDtoList, TrafficDto trafficDto) {
+    private List<RouteDto> getJamedRouteDtoList(List<RouteDto> routeDtoList, List<TrafficJamDto> trafficDto) {
         List<RouteDto> newRouteDtoList = new ArrayList<>();
-        routeDtoList.forEach(routeDto -> trafficDto.getTraffic().forEach(trafficJamDto -> {
-            int to = routeDto.getTo();
+        routeDtoList.forEach(routeDto -> trafficDto.forEach(trafficJamDto -> {
             int from = routeDto.getFrom();
-            if (to == trafficJamDto.getTo() && from == trafficJamDto.getFrom()) {
+            int to = routeDto.getTo();
+
+            if (from == trafficJamDto.getFrom() && to == trafficJamDto.getTo()) {
                 newRouteDtoList.add(new RouteDto(from, to, (int) (routeDto.getTime() * trafficJamDto.getJam())));
             }
         }));

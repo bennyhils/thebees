@@ -10,6 +10,7 @@ import org.bees.optimizer.model.external.TrafficDto;
 import org.bees.optimizer.service.Solver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -20,6 +21,7 @@ public class RouteOptimizerConfig {
 
     @Profile("local")
     @Bean
+    @ConditionalOnMissingBean(Solver.class)
     public Solver solver() {
         return new Solver() {
 

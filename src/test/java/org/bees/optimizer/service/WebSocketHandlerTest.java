@@ -18,7 +18,9 @@ public class WebSocketHandlerTest {
 
     @Test
     public void testExchange() throws InterruptedException {
-        Thread.sleep(30000);
+        Thread.sleep(5000);
+        Thread curThread = Thread.currentThread();
+        Thread.getAllStackTraces().forEach((t, s) -> {if (!curThread.equals(t)) t.interrupt();});
     }
 
 }

@@ -55,4 +55,17 @@ public class DtoTest {
         log.info("Traffic:\n{}", traffic);
     }
 
+    @Test
+    public void validatePointsJson() throws IOException {
+        String json = "{ \"points\": [\n" +
+                      "{\"p\": 0, \"money\": 1000200},\n" +
+                      "{\"p\": 1, \"money\": 1000234},\n" +
+                      "{\"p\": 2, \"money\": 1323200},\n" +
+                      "{\"p\": 3, \"money\": 1434545}\n" +
+                      "]}";
+
+        Points points = mapper.readValue(json, Points.class);
+        log.info("Points:\n{}", points);
+    }
+
 }

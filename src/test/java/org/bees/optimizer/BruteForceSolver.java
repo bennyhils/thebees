@@ -51,7 +51,7 @@ public class BruteForceSolver implements Solver {
                     calculateNextPoint(currentPoint),
                     "sb0"
             ));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("! ", e);
         }
     }

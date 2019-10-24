@@ -80,9 +80,18 @@ public class DtoTest {
 
     @Test
     public void validateLoginJson() throws JsonProcessingException {
-        LoginDto loginDto = new LoginDto("The Bees");
+        LoginDto dto = new LoginDto("The Bees");
         String expectedJson = "{\"team\":\"The Bees\"}";
-        String json = mapper.writeValueAsString(loginDto);
+        String json = mapper.writeValueAsString(dto);
+
+        Assert.assertEquals(expectedJson, json);
+    }
+
+    @Test
+    public void validateGotoJson() throws JsonProcessingException {
+        GotoDto dto = new GotoDto(2, "sb4");
+        String expectedJson = "{\"goto\":2,\"car\":\"sb4\"}";
+        String json = mapper.writeValueAsString(dto);
 
         Assert.assertEquals(expectedJson, json);
     }

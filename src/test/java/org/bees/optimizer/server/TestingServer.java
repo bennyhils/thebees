@@ -52,7 +52,7 @@ public class TestingServer {
             System.out.println(sackPoint);
         }
 
-        Find find = TimeKnapsack.find(sackPoints, 200);
+        Find find = TimeKnapsack.find(sackPoints, 60);
         find.display();
     }
 

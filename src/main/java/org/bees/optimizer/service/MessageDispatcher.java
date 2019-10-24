@@ -25,11 +25,18 @@ public class MessageDispatcher {
         this.solver = solver;
     }
 
+    private WebSocketHanler webSocketHanler;
+
+    @Autowired
+    public void setWebSocketHanler(WebSocketHanler webSocketHanler) {
+        this.webSocketHanler = webSocketHanler;
+    }
+
     public void dispatchMessage(String message) {
         log.info("Got message: {}", message);
         try {
             ArriveDto arriveDto = mapper.readValue(message, ArriveDto.class);
-            new Thread(() -> solver.processArrive(arriveDto)).start();
+            solver.processArrive(arriveDto);
             return;
         } catch (IOException e) {
             log.debug("It's not ArriveDto");
@@ -37,7 +44,7 @@ public class MessageDispatcher {
 
         try {
             TrafficDto trafficDto = mapper.readValue(message, TrafficDto.class);
-            new Thread(() -> solver.processTraffic(trafficDto)).start();
+            solver.processTraffic(trafficDto);
             return;
         } catch (IOException e) {
             log.debug("It's not TrafficDto");
@@ -45,7 +52,7 @@ public class MessageDispatcher {
 
         try {
             PointsDto pointsDto = mapper.readValue(message, PointsDto.class);
-            new Thread(() -> solver.processPoints(pointsDto)).start();
+            solver.processPoints(pointsDto);
             return;
         } catch (IOException e) {
             log.debug("It's not PointsDto");
@@ -53,7 +60,7 @@ public class MessageDispatcher {
 
         try {
             RoutesDto routesDto = mapper.readValue(message, RoutesDto.class);
-            new Thread(() -> solver.processRoutes(routesDto)).start();
+            solver.processRoutes(routesDto);
             return;
         } catch (IOException e) {
             log.debug("It's not RoutesDto");
@@ -61,7 +68,8 @@ public class MessageDispatcher {
 
         try {
             TokenDto tokenDto = mapper.readValue(message, TokenDto.class);
-            new Thread(() -> solver.processToken(tokenDto)).start();
+            webSocketHanler.saveToken(tokenDto);
+            solver.processToken(tokenDto);
             return;
         } catch (IOException e) {
             log.debug("It's not OverallSum");
@@ -69,7 +77,7 @@ public class MessageDispatcher {
 
         try {
             OverallSum overallSum = mapper.readValue(message, OverallSum.class);
-            new Thread(() -> solver.processOverallSum(overallSum)).start();
+            solver.processOverallSum(overallSum);
             return;
         } catch (IOException e) {
             log.debug("It's not OverallSum");

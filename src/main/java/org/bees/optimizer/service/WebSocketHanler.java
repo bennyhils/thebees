@@ -1,17 +1,12 @@
 package org.bees.optimizer.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.model.external.ArriveDto;
 import org.bees.optimizer.model.external.GotoDto;
 import org.bees.optimizer.model.external.LoginDto;
-import org.bees.optimizer.model.external.OverallSum;
-import org.bees.optimizer.model.external.PointsDto;
-import org.bees.optimizer.model.external.RoutesDto;
-import org.bees.optimizer.model.external.TrafficDto;
+import org.bees.optimizer.model.external.ReconnectDto;
+import org.bees.optimizer.model.external.TokenDto;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,6 @@ import org.springframework.stereotype.Service;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -38,18 +32,21 @@ import java.net.URI;
 public class WebSocketHanler implements InitializingBean, ApplicationContextAware {
 
     private MessageDispatcher messageDispatcher;
+    private static final int RECONNECT_COUNT = 3;
 
     @Autowired
     public void setMessageDispatcher(MessageDispatcher messageDispatcher) {
         this.messageDispatcher = messageDispatcher;
     }
 
+    private String endpoint;
     private Session userSession = null;
+    private String token;
 
     private ApplicationContext context;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private void startConnection(String endpoint) {
+    private void startConnection() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, new URI(endpoint));
@@ -57,8 +54,14 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
             registerOnServer("The Bees");
         } catch (Exception e) {
             log.error("Got some error while trying to connect: ", e);
-            throw new RuntimeException(e);
         }
+    }
+
+    private void tryReconnect() throws Exception {
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        container.connectToServer(this, new URI(endpoint));
+        Thread.sleep(500);
+        registerReconnect(token);
     }
 
     @OnOpen
@@ -72,6 +75,15 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
     public void onClose(Session session, CloseReason reason) {
         log.warn("Session closed: {}", reason);
         this.userSession = null;
+
+        log.warn("Trying to reconnect...");
+        for (int i = 0; i < RECONNECT_COUNT; ++i) {
+            try {
+                tryReconnect();
+            } catch (Exception e) {
+                log.warn("Reconnect {} failed: ", i, e);
+            }
+        }
     }
 
     @OnMessage
@@ -88,6 +100,12 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(loginDto));
     }
 
+    private void registerReconnect(String token) throws JsonProcessingException {
+        ReconnectDto reconnectDto = new ReconnectDto(token);
+
+        this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(reconnectDto));
+    }
+
     public void sendCar(GotoDto gotoDto) throws IOException {
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(gotoDto));
     }
@@ -95,8 +113,8 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
     @Override
     public void afterPropertiesSet() {
         Environment env = this.context.getEnvironment();
-        String endpoint = env.getProperty("server.socket.endpoint", String.class, "http://localhost:8080/race");
-        this.startConnection(endpoint);
+        this.endpoint = env.getProperty("server.socket.endpoint", String.class, "http://localhost:8080/race");
+        this.startConnection();
     }
 
     @Override
@@ -104,4 +122,7 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
         this.context = applicationContext;
     }
 
+    public void saveToken(TokenDto tokenDto) {
+        this.token = tokenDto.getToken();
+    }
 }

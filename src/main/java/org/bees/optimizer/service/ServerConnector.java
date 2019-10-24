@@ -7,6 +7,9 @@ import org.bees.optimizer.model.external.LoginDto;
 import org.bees.optimizer.model.external.ReconnectDto;
 import org.bees.optimizer.model.external.RouteDto;
 import org.bees.optimizer.model.external.TokenDto;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +27,12 @@ public class ServerConnector {
 //            ResponseEntity<Response> rs = restTemplate.postForEntity(exportUrl(), campaignDTOBy(campaign),
 //                    Response.class);
 //            processResponse(rs);
+            TokenDto tokenDto = restTemplate.exchange(
+                    "http://localhost:8080/login",
+                    HttpMethod.POST,
+                    new HttpEntity<>(team),
+                    TokenDto.class
+            ).getBody();
         } catch (HttpClientErrorException ex) {
             log.error("Team name sending error: " + ex.getResponseBodyAsString(), ex);
         } catch (Exception ex) {

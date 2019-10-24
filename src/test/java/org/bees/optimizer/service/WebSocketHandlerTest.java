@@ -10,7 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
         classes = RouteOptimizerConfig.class,
         properties = {
-                "server.socket.endpoint=ws://localhost:8080/race"
+                "server.socket.endpoint=ws://localhost:8080/race",
+                "spring.profiles.active=local"
         }
 )
 public class WebSocketHandlerTest {

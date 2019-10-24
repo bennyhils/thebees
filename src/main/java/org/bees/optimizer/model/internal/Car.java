@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Car {
-    private int capacity;
+    private long capacity = 1000000L;
     private String name;
+
+    public Car(String name) {
+        this.name = name;
+    }
 }

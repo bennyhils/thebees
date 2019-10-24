@@ -38,45 +38,88 @@ public class ModelGenerator {
         return minInclusive + rng.nextInt(maxInclusive - minInclusive + 1);
     }
 
+    /**
+     * Генерация начальных точек. Первые две точки (с индексами 0 и 1) не имеют денег.
+     *
+     * @param numPoints количество точек, не включая начальную
+     * @param minValue  минимальное значение деняк, включительно
+     * @param maxValue  максимальное значение деняк, не включительно
+     * @return          дто с точками
+     */
     public static PointsDto generatePoints(
             int numPoints,
             long minValue,
             long maxValue
     ) {
         List<PointDto> generatedPoints = new LinkedList<>();
-        IntStream.range(0, numPoints)
+        IntStream.rangeClosed(0, numPoints)
                  .sequential()
-                 .forEach(i -> generatedPoints.add(new PointDto(i, nextBoundedLong(minValue, maxValue))));
+                 .forEach(i -> generatedPoints.add(new PointDto(i, i < 2 ? 0L : (nextBoundedLong(minValue, maxValue)))));
 
         return new PointsDto(generatedPoints);
     }
 
+    /**
+     * Генерация трафика.
+     *
+     * @param numPoints количество точек, не включая начальную
+     * @param minVal    минимальный коэф пробки
+     * @param maxVal    максимальный коэф пробки
+     * @param isInitial флаг инициализирующего трафика
+     * @return          дто с пробками
+     */
     public static TrafficDto generateTraffic(
             int numPoints,
             double minVal,
-            double maxVal
+            double maxVal,
+            boolean isInitial
     ) {
         List<TrafficJamDto> generatedTraffic = new LinkedList<>();
-        IntStream.range(0, numPoints - 1).forEach(i -> {
-            IntStream.range(i + 1, numPoints).forEach(j -> {
+        IntStream.rangeClosed(isInitial ? 0 : 1, numPoints - 1).forEach(i -> {
+            IntStream.rangeClosed(i + 1, numPoints).forEach(j -> {
                 generatedTraffic.add(new TrafficJamDto(i, j, nextBoundedDouble(minVal, maxVal)));
             });
         });
         return new TrafficDto(generatedTraffic);
     }
 
-    public static TrafficDto generateTraffic(int numPoints) {
-        return generateTraffic(numPoints, 1.0, 2.0);
+    /**
+     * Генерация трафика.
+     *
+     * @param numPoints количество точек, не включая начальную
+     * @param isInitial флаг инициализирующего трафика
+     * @return          дто с пробками
+     */
+    public static TrafficDto generateTraffic(int numPoints, boolean isInitial) {
+        return generateTraffic(numPoints, 1.0, 2.0, isInitial);
     }
 
+    /**
+     * Генерация трафика. Считаем, что генерим <b>не</b> начальный трафик
+     *
+     * @param numPoints количество точек, не включая начальную
+     * @return          дто с пробками
+     */
+    public static TrafficDto generateTraffic(int numPoints) {
+        return generateTraffic(numPoints, 1.0, 2.0, false);
+    }
+
+    /**
+     * Генерация дорог. Полный рандом!
+     *
+     * @param numPoints количество точек, не считая начальную
+     * @param minTime   минимальное время проезда
+     * @param maxTime   максимальное время проезда
+     * @return          дто дорог (список ребер)
+     */
     public static RoutesDto generateRoutes(
             int numPoints,
             int minTime,
             int maxTime
     ) {
         List<RouteDto> generatedRoutes = new LinkedList<>();
-        IntStream.range(0, numPoints - 1).forEach(i -> {
-            IntStream.range(i + 1, numPoints).forEach(j -> {
+        IntStream.rangeClosed(0, numPoints - 1).forEach(i -> {
+            IntStream.rangeClosed(i + 1, numPoints).forEach(j -> {
                 generatedRoutes.add(new RouteDto(i, j, nextBoundedInt(minTime, maxTime)));
             });
         });

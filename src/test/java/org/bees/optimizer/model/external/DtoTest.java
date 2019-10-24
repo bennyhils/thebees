@@ -74,6 +74,14 @@ public class DtoTest {
         log.info("PointsDto:\n{}", points);
     }
 
+    @Test
+    public void validateArriveJson() throws IOException {
+        String json = "{ \"point\": 2, \"car\": \"sb4\" }";
+
+        ArriveDto arriveDto = mapper.readValue(json, ArriveDto.class);
+        log.info("ArriveDto:\n{}", arriveDto);
+    }
+
     //---------------
     // Output models
     //---------------
@@ -91,6 +99,15 @@ public class DtoTest {
     public void validateGotoJson() throws JsonProcessingException {
         GotoDto dto = new GotoDto(2, "sb4");
         String expectedJson = "{\"goto\":2,\"car\":\"sb4\"}";
+        String json = mapper.writeValueAsString(dto);
+
+        Assert.assertEquals(expectedJson, json);
+    }
+
+    @Test
+    public void validateGotoNomoneyJson() throws JsonProcessingException {
+        GotoDto dto = new GotoDto(45, "sb1", true);
+        String expectedJson = "{\"goto\":45,\"car\":\"sb1\",\"nomoney\":true}";
         String json = mapper.writeValueAsString(dto);
 
         Assert.assertEquals(expectedJson, json);

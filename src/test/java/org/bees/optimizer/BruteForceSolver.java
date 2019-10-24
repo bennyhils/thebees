@@ -99,7 +99,7 @@ public class BruteForceSolver implements Solver {
             if (!indexes.contains(i)) {
                 indexes.push(i);
                 Result result = fun(depth - 1, indexes, curPoint);
-                if (result.money > best.money) {
+                if (result.money > best.money || result.money == best.money && result.time < best.time) {
                     best = result;
                 }
                 indexes.pop();

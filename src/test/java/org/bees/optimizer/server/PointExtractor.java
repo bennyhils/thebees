@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class PointExtractor {
-    private static Map<Integer, SackPoint> pointDtoMap = new HashMap<>();
+    private static Map<Integer, SackPoint> sackPointMap = new HashMap<>();
     private Cacher cacher;
 
     public List<SackPoint> extractPoints(
@@ -19,25 +19,28 @@ public class PointExtractor {
             int depth,
             Stack<Integer> pointStack
     ) {
-        List<RouteDto> collect = routesDto.getRoutes().stream().filter(routeDto -> routeDto.getFrom() == pointStack.peek()).collect(Collectors.toList());
+        return extractPointsInner(
+                getJamedRouteDtoList(
+                        exceptFirstPoint(routesDto, pointStack), trafficDto), pointsDto, new ArrayList<>(), depth, pointStack);
+    }
 
-        return extractPointsInner(collect, pointsDto, trafficDto, new ArrayList<>(), depth, pointStack);
+    private List<RouteDto> exceptFirstPoint(RoutesDto routesDto, Stack<Integer> pointStack) {
+        return routesDto.getRoutes().stream().filter(routeDto -> routeDto.getFrom() == pointStack.peek()).collect(Collectors.toList());
     }
 
     public List<SackPoint> extractPointsInner(
             List<RouteDto> routesDto,
             PointsDto pointsDto,
-            TrafficDto trafficDto,
             List<SackPoint> sackPointList,
             int depth,
             Stack<Integer> pointStack) {
 
-        routesDto.forEach(routeDto -> {
-            PointDto pointDto = cacher.getIntPointMap().get(routeDto.getTo());
-            pointDtoMap.put(routeDto.getTo(), new SackPoint(pointDto.getIndex() + "", pointDto.getMoney(), routeDto.getTime()));
+        routesDto.stream().filter(routeDto -> !isValueInStack(routeDto.getTo(), pointStack)).forEach(routeDto -> {
+            PointDto pointDto = getPointDto(routeDto);
+            sackPointMap.put(routeDto.getTo(), new SackPoint(pointDto.getIndex() + "", pointDto.getMoney(), routeDto.getTime()));
             pointStack.add(routeDto.getTo());
 
-            doCreate(routesDto, pointsDto, trafficDto, pointStack, depth, sackPointList, routeDto, pointDto);
+            doCreate(routesDto, pointsDto, pointStack, depth, sackPointList);
         });
 
         return sackPointList;
@@ -46,15 +49,12 @@ public class PointExtractor {
     private void doCreate(
             List<RouteDto> routeDtoList,
             PointsDto pointsDto,
-            TrafficDto trafficDto,
             Stack<Integer> pointStack,
             int depth,
-            List<SackPoint> sackPointList,
-            RouteDto routeDto,
-            PointDto pointDto) {
+            List<SackPoint> sackPointList) {
 
         if (depth > 1) {
-            extractPointsInner(routeDtoList, pointsDto, trafficDto, sackPointList, depth - 1, pointStack);
+            extractPointsInner(routeDtoList, pointsDto, sackPointList, depth - 1, pointStack);
         } else {
             createPoint(pointStack, sackPointList);
         }
@@ -70,13 +70,39 @@ public class PointExtractor {
         StringBuilder pointNameBuilder = new StringBuilder();
 
         for (Integer pointNum : pointStack) {
-            if(pointNum != 0) {
+            if (pointNum != 0) {
                 pointNameBuilder.append(pointNum).append("_");
-                money += pointDtoMap.get(pointNum).money;
-                time += pointDtoMap.get(pointNum).time;
+                money += sackPointMap.get(pointNum).money;
+                time += sackPointMap.get(pointNum).time;
             }
         }
 
         sackPointList.add(new SackPoint(pointNameBuilder.toString(), money, time));
+    }
+
+    // TODO map in stream
+    private List<RouteDto> getJamedRouteDtoList(List<RouteDto> routeDtoList, TrafficDto trafficDto) {
+        List<RouteDto> newRouteDtoList = new ArrayList<>();
+        routeDtoList.forEach(routeDto -> trafficDto.getTraffic().forEach(trafficJamDto -> {
+            int to = routeDto.getTo();
+            int from = routeDto.getFrom();
+            if (to == trafficJamDto.getTo() && from == trafficJamDto.getFrom()) {
+                newRouteDtoList.add(new RouteDto(from, to, (int) (routeDto.getTime() * trafficJamDto.getJam())));
+            }
+        }));
+        return newRouteDtoList;
+    }
+
+    private PointDto getPointDto(RouteDto routeDto) {
+        return cacher.getIntPointMap().get(routeDto.getTo());
+    }
+
+    private boolean isValueInStack(int value, Stack<Integer> stack) {
+        for (Integer integer : stack) {
+            if (integer.equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

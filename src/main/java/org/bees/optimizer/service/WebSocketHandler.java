@@ -2,6 +2,7 @@ package org.bees.optimizer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.bees.optimizer.model.external.GotoDto;
 import org.bees.optimizer.model.external.LoginDto;
@@ -124,7 +125,8 @@ public class WebSocketHandler implements
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(reconnectDto));
     }
 
-    public void sendCar(GotoDto gotoDto) throws IOException {
+    @SneakyThrows
+    public void sendCar(GotoDto gotoDto) {
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(gotoDto));
     }
 

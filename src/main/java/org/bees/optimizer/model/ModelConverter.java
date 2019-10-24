@@ -2,9 +2,13 @@ package org.bees.optimizer.model;
 
 import org.bees.optimizer.model.external.PointsDto;
 import org.bees.optimizer.model.external.RoutesDto;
+import org.bees.optimizer.model.external.TokenDto;
 import org.bees.optimizer.model.external.TrafficDto;
+import org.bees.optimizer.model.internal.Car;
 
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -81,4 +85,9 @@ public class ModelConverter {
         return ans;
     }
 
+    public static List<Car> convertTokenToCar(TokenDto tokenDto) {
+        List<Car> cars = new LinkedList<>();
+        tokenDto.getCars().stream().forEach(s -> cars.add(new Car(s)));
+        return cars;
+    }
 }

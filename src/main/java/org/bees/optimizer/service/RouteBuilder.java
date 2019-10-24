@@ -18,6 +18,8 @@ public class RouteBuilder {
     private final int maxRecursionIterations;
     private final List<Car> cars;
 
+    private double averageAlgorithmTime = 0;
+
     public RouteBuilder(int[][] routes, long[] points, List<Car> cars, double gamma, int maxRecursionIterations) {
         if (!(points.length == routes[0].length && routes.length == points.length)) {
             throw new IllegalArgumentException(String.format("Dimension should be the same routes %d, routes[0] %s, nodes %d, cars %d", routes.length, routes[0].length, points.length, cars.size()));
@@ -41,23 +43,35 @@ public class RouteBuilder {
         return gotoDtos;
    }
 
-   public synchronized GotoDto makeDecision(Car car, int currentPoint, int remainCapacity, double[][] trafficJams) {
+   public GotoDto makeDecision(String carName, int currentPoint, long remainCapacity, double[][] trafficJams) {
+       Car car = cars.stream().filter(value -> value.getName().equals(carName)).findAny().get();
+       return makeDecision(car, currentPoint, remainCapacity, trafficJams);
+   }
 
-        Solution bestSolution = getBestSolution(car.getCapacity(), currentPoint, remainCapacity, trafficJams, 0);
-        synchronized (points) {
+   public synchronized GotoDto makeDecision(Car car, int currentPoint, long remainCapacity, double[][] trafficJams) {
+       long beforeTimeMillis = System.currentTimeMillis();
+       log.debug("state before {}, currentPoint {}, car {}, remainCapacity {}, currentTimeInMillis {}", toString(), currentPoint, car.getName(), remainCapacity, beforeTimeMillis);
 
-        }
-        points[bestSolution.point] = 0;
+       Solution bestSolution = getBestSolution(car.getCapacity(), currentPoint, remainCapacity, trafficJams, 0);
+
+       long spentTime = System.currentTimeMillis() - beforeTimeMillis;
+       if (averageAlgorithmTime == 0) {
+           averageAlgorithmTime = spentTime;
+       } else {
+           averageAlgorithmTime = (averageAlgorithmTime + spentTime) / 2;
+       }
+       log.info("make decision, state after! car {}, currentPoint {}, decisionPoint {}, remainCapacity {}, pointMoney {}, spentTime {}, average {}", car.getName(), currentPoint, bestSolution.point, remainCapacity - points[bestSolution.point], points[bestSolution.point], spentTime, averageAlgorithmTime);
+       points[bestSolution.point] = 0;
 
         ///todo add hash to calculated states
 
-        return new GotoDto(bestSolution.point, car.getName());
+       return new GotoDto(bestSolution.point, car.getName());
     }
 
     public Solution getBestSolution(long carCapacity, int currentPoint, long remainCapacity, double[][] trafficJams, int currentRecursion) {
-        log.debug("currentPoint {}, remainCapacity {}, currentRecursion {}", currentPoint, remainCapacity, currentRecursion);
+        log.trace("currentPoint {}, remainCapacity {}, currentRecursion {}", currentPoint, remainCapacity, currentRecursion);
         if (currentRecursion >= maxRecursionIterations) {
-            log.debug("current recursion {} more than max {}", currentRecursion, maxRecursionIterations);
+            log.trace("current recursion {} more than max {}", currentRecursion, maxRecursionIterations);
             return null;
         }
 
@@ -65,7 +79,7 @@ public class RouteBuilder {
         double maxValue = valueFunction(trafficJams[currentPoint][1], routes[currentPoint][1], carCapacity - remainCapacity);;
         int bestRoute = 1;
 
-        log.debug("init max value to bank {}, currentPoint {}, remainCapacity {}, currentRecursion {}",maxValue, currentPoint, remainCapacity, currentRecursion);
+        log.trace("init max value to bank {}, currentPoint {}, remainCapacity {}, currentRecursion {}",maxValue, currentPoint, remainCapacity, currentRecursion);
 
         ///TODO проверка если осталось мало времени моделированиђ
         //пересчитываем веса у возможных состояний
@@ -76,10 +90,10 @@ public class RouteBuilder {
 
             if (remainCapacity >= points[j]) {
                 double pointValue = valueFunction(trafficJams[currentPoint][j], routes[currentPoint][j], points[j]);
-                log.debug("value {} from current {} to point {}", pointValue, currentPoint, j);
+                log.trace("value {} from current {} to point {}", pointValue, currentPoint, j);
 
-                Solution predictedPointSolution = getBestSolution(carCapacity,  j, remainCapacity - points[j], trafficJams, ++currentRecursion);
-                log.debug("predictedPointSolution {} from current {} to point {}", predictedPointSolution, currentPoint, j);
+                Solution predictedPointSolution = getBestSolution(carCapacity,  j, remainCapacity - points[j], trafficJams, currentRecursion + 1);
+                log.trace("predictedPointSolution {} from current {} to point {}", predictedPointSolution, currentPoint, j);
                 if (predictedPointSolution != null) {
                     pointValue = pointValue + Math.pow(gamma, currentRecursion) * predictedPointSolution.value;
                 }
@@ -87,7 +101,7 @@ public class RouteBuilder {
                 if (maxValue < pointValue) {
                     maxValue = pointValue;
                     bestRoute = j;
-                    log.debug("change max value {}, route {}", maxValue, bestRoute);
+                    log.trace("change max value {}, route {}", maxValue, bestRoute);
                 }
             }
         }
@@ -117,7 +131,6 @@ public class RouteBuilder {
     @Override
     public String toString() {
         return "RouteBuilder{" +
-                "routes=" + Arrays.toString(routes) +
                 ", points=" + Arrays.toString(points) +
                 ", gamma=" + gamma +
                 ", maxRecursionIterations=" + maxRecursionIterations +

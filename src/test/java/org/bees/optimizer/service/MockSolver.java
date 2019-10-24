@@ -9,12 +9,15 @@ import org.bees.optimizer.model.external.RoutesDto;
 import org.bees.optimizer.model.external.TokenDto;
 import org.bees.optimizer.model.external.TrafficDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@Service
+@Profile("local")
 public class MockSolver implements Solver {
 
     private WebSocketHandler server;
@@ -34,8 +37,8 @@ public class MockSolver implements Solver {
     @Override
     public void processTraffic(TrafficDto trafficDto) {
         log.info("Got traffic: {}", trafficDto);
-        try {
-            synchronized (sendTimes) {switch (sendTimes.get()) {
+        synchronized (sendTimes) {
+            switch (sendTimes.get()) {
                 case 0:
                     server.sendCar(new GotoDto(2, "sb0"));
                     sendTimes.incrementAndGet();
@@ -46,9 +49,7 @@ public class MockSolver implements Solver {
                     break;
                 default:
                     // do nothing
-            }}
-        } catch (IOException e) {
-            log.error("ВСЁ СЛОМАЛОСЬ БЛЯ");
+            }
         }
     }
 

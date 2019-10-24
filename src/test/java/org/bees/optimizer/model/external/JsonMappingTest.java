@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Slf4j
-public class DtoTest {
+public class JsonMappingTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 

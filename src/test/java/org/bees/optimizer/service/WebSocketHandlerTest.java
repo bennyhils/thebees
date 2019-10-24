@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 "server.socket.endpoint=ws://localhost:8080/race"
         }
 )
-public class WebSocketHanlerTest {
+public class WebSocketHandlerTest {
 
     @Test
     public void testExchange() throws InterruptedException {

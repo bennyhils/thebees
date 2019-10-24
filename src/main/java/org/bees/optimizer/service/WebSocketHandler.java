@@ -10,8 +10,10 @@ import org.bees.optimizer.model.external.TokenDto;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,11 @@ import java.net.URI;
 @Slf4j
 @Service
 @ClientEndpoint
-public class WebSocketHanler implements InitializingBean, ApplicationContextAware {
+public class WebSocketHandler implements
+        InitializingBean,
+        ApplicationContextAware,
+        ApplicationListener<ApplicationReadyEvent>
+{
 
     private MessageDispatcher messageDispatcher;
     private static final int RECONNECT_COUNT = 3;
@@ -62,6 +68,18 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
         container.connectToServer(this, new URI(endpoint));
         Thread.sleep(500);
         registerReconnect(token);
+    }
+
+    private void startPolling() {
+        while (true) {
+            try {
+                Thread.sleep(2000);
+                log.debug("I'm ok");
+            } catch (InterruptedException e) {
+                log.error("Interrupted by: ", e);
+                break;
+            }
+        }
     }
 
     @OnOpen
@@ -114,7 +132,7 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
     public void afterPropertiesSet() {
         Environment env = this.context.getEnvironment();
         this.endpoint = env.getProperty("server.socket.endpoint", String.class, "ws://localhost:8080/race");
-        this.startConnection();
+        log.info("Got endpoint value: {}", this.endpoint);
     }
 
     @Override
@@ -124,5 +142,11 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
 
     public void saveToken(TokenDto tokenDto) {
         this.token = tokenDto.getToken();
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        this.startConnection();
+        new Thread(() -> this.startPolling()).start();
     }
 }

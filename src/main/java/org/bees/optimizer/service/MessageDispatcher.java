@@ -25,11 +25,11 @@ public class MessageDispatcher {
         this.solver = solver;
     }
 
-    private WebSocketHanler webSocketHanler;
+    private WebSocketHandler webSocketHandler;
 
     @Autowired
-    public void setWebSocketHanler(WebSocketHanler webSocketHanler) {
-        this.webSocketHanler = webSocketHanler;
+    public void setWebSocketHandler(WebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
     }
 
     public void dispatchMessage(String message) {
@@ -68,7 +68,7 @@ public class MessageDispatcher {
 
         try {
             TokenDto tokenDto = mapper.readValue(message, TokenDto.class);
-            webSocketHanler.saveToken(tokenDto);
+            webSocketHandler.saveToken(tokenDto);
             solver.processToken(tokenDto);
             return;
         } catch (IOException e) {

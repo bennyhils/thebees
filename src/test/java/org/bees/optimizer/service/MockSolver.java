@@ -12,20 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
 public class MockSolver implements Solver {
 
-    private WebSocketHanler server;
+    private WebSocketHandler server;
 
     private AtomicInteger sendTimes = new AtomicInteger();
 
     @Autowired
-    public void setServer(WebSocketHanler webSocketHanler) {
-        this.server = webSocketHanler;
+    public void setServer(WebSocketHandler webSocketHandler) {
+        this.server = webSocketHandler;
     }
 
     @Override

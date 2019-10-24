@@ -7,22 +7,22 @@ import static org.bees.optimizer.knapsack.TimeKnapsack.find;
 
 public class TimeKnapsackTest {
     public static void main(String[] args) {
-        List<Point> pointList = getPointList();
-        display(pointList);
-        find(pointList, 4).display();
+        List<SackPoint> sackPointList = getPointList();
+        display(sackPointList);
+        find(sackPointList, 4).display();
     }
 
-    private static List<Point> getPointList() {
-        List<Point> pointList = new ArrayList<>();
-        pointList.add(new Point("A", 100, 5));
-        pointList.add(new Point("B", 20, 4));
-        pointList.add(new Point("C", 30, 1));
-        pointList.add(new Point("D", 15, 1));
+    private static List<SackPoint> getPointList() {
+        List<SackPoint> sackPointList = new ArrayList<>();
+        sackPointList.add(new SackPoint("A", 100, 5));
+        sackPointList.add(new SackPoint("B", 20, 4));
+        sackPointList.add(new SackPoint("C", 30, 1));
+        sackPointList.add(new SackPoint("D", 15, 1));
 
-        return pointList;
+        return sackPointList;
     }
 
-    private static void display(List<Point> pointList) {
-        pointList.forEach(point -> System.out.println(point.toString()));
+    private static void display(List<SackPoint> sackPointList) {
+        sackPointList.forEach(sackPoint -> System.out.println(sackPoint.toString()));
     }
 }

@@ -95,7 +95,7 @@ public class WebSocketHanler implements InitializingBean, ApplicationContextAwar
     @Override
     public void afterPropertiesSet() {
         Environment env = this.context.getEnvironment();
-        String endpoint = env.getProperty("server.socket.endpoint", String.class, "http://localhost:8080/race");
+        String endpoint = env.getProperty("server.socket.endpoint", String.class, "ws://localhost:8080/race");
         this.startConnection(endpoint);
     }
 

@@ -1,1 +1,3 @@
 logging.level.org.bees.optimizer.service: DEBUG
+server:
+  port: 8888

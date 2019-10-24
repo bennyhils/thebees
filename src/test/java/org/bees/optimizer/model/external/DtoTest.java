@@ -31,4 +31,28 @@ public class DtoTest {
         log.info("Routes:\n{}", routes);
     }
 
+    @Test
+    public void validateTrafficJson() throws IOException {
+        String json = "{ \"traffic\": [\n" +
+                      "{\"a\":1 , \"b\":7 , \"jam\": 1.0 },\n" +
+                      "{\"a\":6 , \"b\":30, \"jam\": 1.5 },\n" +
+                      "{\"a\":10, \"b\":17, \"jam\": 1.9 }\n" +
+                      "]}";
+
+        Traffic traffic = mapper.readValue(json, Traffic.class);
+        log.info("Traffic:\n{}", traffic);
+    }
+
+    @Test
+    public void validateTrafficJamJson() throws IOException {
+        String json = "{ \"trafficjam\": [\n" +
+                      "{\"a\":1 , \"b\":7 , \"jam\": 1.0 },\n" +
+                      "{\"a\":6 , \"b\":30, \"jam\": 1.5 },\n" +
+                      "{\"a\":10, \"b\":17, \"jam\": 1.9 }\n" +
+                      "]}";
+
+        Traffic traffic = mapper.readValue(json, Traffic.class);
+        log.info("Traffic:\n{}", traffic);
+    }
+
 }

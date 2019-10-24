@@ -96,4 +96,13 @@ public class DtoTest {
         Assert.assertEquals(expectedJson, json);
     }
 
+    @Test
+    public void validateReconnectJson() throws JsonProcessingException {
+        ReconnectDto dto = new ReconnectDto("12321");
+        String expectedJson = "{\"reconnect\":\"12321\"}";
+        String json = mapper.writeValueAsString(dto);
+
+        Assert.assertEquals(expectedJson, json);
+    }
+
 }

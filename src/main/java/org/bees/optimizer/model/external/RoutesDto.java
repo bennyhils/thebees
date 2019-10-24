@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public class RoutesDto {
@@ -35,5 +36,16 @@ public class RoutesDto {
     public static class DestinationDto {
         private final int to;
         private final int time;
+    }
+
+    public RoutesDto getExtendedRoutes() {
+        return new RoutesDto(
+                routes.stream()
+                      .flatMap(r -> Stream.of(
+                              new RouteDto(r.getFrom(), r.getTo(), r.getTime()),
+                              new RouteDto(r.getTo(), r.getFrom(), r.getTime())
+                      ))
+                      .collect(Collectors.toList())
+        );
     }
 }

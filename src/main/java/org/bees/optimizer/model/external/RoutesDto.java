@@ -2,6 +2,8 @@ package org.bees.optimizer.model.external;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.List;
@@ -19,5 +21,19 @@ public class RoutesDto {
     @Override
     public String toString() {
         return routes.stream().map(r -> r.toString()).collect(Collectors.joining("\n"));
+    }
+
+    public List<DestinationDto> getDestinationsFrom(int i) {
+        return routes.stream()
+                     .filter(r -> r.getFrom() == i && r.getTo() != i)
+                     .map(r -> new DestinationDto(r.getTo(), r.getTime()))
+                     .collect(Collectors.toList());
+    }
+
+    @EqualsAndHashCode
+    @AllArgsConstructor
+    public static class DestinationDto {
+        private final int to;
+        private final int time;
     }
 }

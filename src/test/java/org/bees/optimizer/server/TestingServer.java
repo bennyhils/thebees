@@ -3,15 +3,15 @@ package org.bees.optimizer.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.knapsack.Point;
+import org.bees.optimizer.knapsack.SackPoint;
 import org.bees.optimizer.knapsack.TimeKnapsack;
 import org.bees.optimizer.knapsack.TimeKnapsack.Find;
 import org.bees.optimizer.model.external.*;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static org.bees.optimizer.server.DataProvider.*;
 
@@ -41,20 +41,19 @@ public class TestingServer {
         PointsDto pointsDto = mapper.readValue(getPoints(), PointsDto.class);
         TrafficDto trafficDto = mapper.readValue(getTraffic(), TrafficDto.class);
 
-        List<Point> points = createPoints(routesDto, pointsDto, 0);
-        Find find = TimeKnapsack.find(points, 200);
+        Cacher cacher = new Cacher(routesDto, pointsDto, trafficDto);
+        PointExtractor pointExtractor = new PointExtractor(cacher);
+
+        Stack<Integer> pointStack = new Stack<>();
+        pointStack.add(0);
+
+        List<SackPoint> sackPoints = pointExtractor.extractPoints(routesDto, pointsDto, trafficDto, 3, pointStack);
+        for (SackPoint sackPoint : sackPoints) {
+            System.out.println(sackPoint);
+        }
+
+        Find find = TimeKnapsack.find(sackPoints, 60);
         find.display();
     }
 
-    private List<Point> createPoints(RoutesDto routesDto, PointsDto pointsDto, int currentPoint) {
-        List<Point> pointList = new ArrayList<>();
-
-        routesDto.getRoutes().forEach(routeDto -> pointsDto.getPoints().forEach(pointDto -> {
-            if (routeDto.getFrom() == currentPoint && pointDto.getIndex() == routeDto.getTo()) {
-                pointList.add(new Point(routeDto.getFrom() + "_" + routeDto.getTo(), pointDto.getMoney(), routeDto.getTime()));
-            }
-        }));
-
-        return pointList;
-    }
 }

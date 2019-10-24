@@ -1,14 +1,14 @@
 package org.bees.optimizer.knapsack;
 
-class Point {
+public class Point {
     // пох на инкапсуляцию, в нашей команде нечего скрывать
     public String name;
     public int money;
     public int time;
 
-    Point(String name, int money, int time) {
+    public Point(String name, long money, int time) {
         this.name = name;
-        this.money = money;
+        this.money = (int) money; // IMPORTANT
         this.time = time;
     }
 
@@ -16,5 +16,4 @@ class Point {
     public String toString() {
         return name + " [money = " + money + ", time = " + time + "]";
     }
-
 }

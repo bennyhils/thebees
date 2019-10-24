@@ -12,8 +12,8 @@ public class PointsDto {
     private final List<PointDto> points;
 
     @JsonCreator
-    public PointsDto(@JsonProperty("points") final List<PointDto> points) {
-        this.points = points;
+    public PointsDto(@JsonProperty("pointList") final List<PointDto> pointList) {
+        this.points = pointList;
     }
 
     @Override

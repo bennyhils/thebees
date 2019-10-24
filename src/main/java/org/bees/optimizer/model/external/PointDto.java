@@ -7,12 +7,12 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class Point {
+public class PointDto {
     private final int index;
     private final long money;
 
     @JsonCreator
-    public Point(
+    public PointDto(
             @JsonProperty("p") final int index,
             @JsonProperty("money") final long money
     ) {

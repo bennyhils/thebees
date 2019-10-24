@@ -1,7 +1,9 @@
 package org.bees.optimizer.model.external;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,12 +13,16 @@ public class DtoTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    //--------------
+    // Input models
+    //--------------
+
     @Test
     public void validateTokenJson() throws IOException {
         String json = "{ \"token\" : \"12321\", \"cars\": [\"sb1\", \"sb2\"], \"level\": 1 }";
 
-        Token token = mapper.readValue(json, Token.class);
-        log.info("Token values:\ntoken={}\ncars={}\nlevel={}", token.getToken(), token.getCars(), token.getLevel());
+        TokenDto token = mapper.readValue(json, TokenDto.class);
+        log.info("TokenDto values:\ntoken={}\ncars={}\nlevel={}", token.getToken(), token.getCars(), token.getLevel());
     }
 
     @Test
@@ -27,8 +33,8 @@ public class DtoTest {
                       "{\"a\":10, \"b\":17, \"time\": 12 }\n" +
                       "]}";
 
-        Routes routes = mapper.readValue(json, Routes.class);
-        log.info("Routes:\n{}", routes);
+        RoutesDto routes = mapper.readValue(json, RoutesDto.class);
+        log.info("RoutesDto:\n{}", routes);
     }
 
     @Test
@@ -39,8 +45,8 @@ public class DtoTest {
                       "{\"a\":10, \"b\":17, \"jam\": 1.9 }\n" +
                       "]}";
 
-        Traffic traffic = mapper.readValue(json, Traffic.class);
-        log.info("Traffic:\n{}", traffic);
+        TrafficDto traffic = mapper.readValue(json, TrafficDto.class);
+        log.info("TrafficDto:\n{}", traffic);
     }
 
     @Test
@@ -51,8 +57,8 @@ public class DtoTest {
                       "{\"a\":10, \"b\":17, \"jam\": 1.9 }\n" +
                       "]}";
 
-        Traffic traffic = mapper.readValue(json, Traffic.class);
-        log.info("Traffic:\n{}", traffic);
+        TrafficDto traffic = mapper.readValue(json, TrafficDto.class);
+        log.info("TrafficDto:\n{}", traffic);
     }
 
     @Test
@@ -64,8 +70,21 @@ public class DtoTest {
                       "{\"p\": 3, \"money\": 1434545}\n" +
                       "]}";
 
-        Points points = mapper.readValue(json, Points.class);
-        log.info("Points:\n{}", points);
+        PointsDto points = mapper.readValue(json, PointsDto.class);
+        log.info("PointsDto:\n{}", points);
+    }
+
+    //---------------
+    // Output models
+    //---------------
+
+    @Test
+    public void validateLoginJson() throws JsonProcessingException {
+        LoginDto loginDto = new LoginDto("The Bees");
+        String expectedJson = "{\"team\":\"The Bees\"}";
+        String json = mapper.writeValueAsString(loginDto);
+
+        Assert.assertEquals(expectedJson, json);
     }
 
 }

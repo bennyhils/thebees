@@ -7,19 +7,19 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class TrafficJam {
+public class RouteDto {
     private final int from;
     private final int to;
-    private final double jam;
+    private final int time;
 
     @JsonCreator
-    public TrafficJam(
+    public RouteDto(
             @JsonProperty("a") final int from,
             @JsonProperty("b") final int to,
-            @JsonProperty("jam") final double jam
+            @JsonProperty("time") final int time
     ) {
         this.from = from;
         this.to = to;
-        this.jam = jam;
+        this.time = time;
     }
 }

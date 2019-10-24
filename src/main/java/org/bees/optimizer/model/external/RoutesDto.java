@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class Routes {
-    private final List<Route> routes;
+public class RoutesDto {
+    private final List<RouteDto> routes;
 
     @JsonCreator
-    public Routes(@JsonProperty("routes") final List<Route> routes) {
+    public RoutesDto(@JsonProperty("routes") final List<RouteDto> routes) {
         this.routes = routes;
     }
 

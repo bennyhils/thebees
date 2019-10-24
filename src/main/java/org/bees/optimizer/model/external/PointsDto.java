@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class Points {
-    private final List<Point> points;
+public class PointsDto {
+    private final List<PointDto> points;
 
     @JsonCreator
-    public Points(@JsonProperty("points") final List<Point> points) {
+    public PointsDto(@JsonProperty("points") final List<PointDto> points) {
         this.points = points;
     }
 

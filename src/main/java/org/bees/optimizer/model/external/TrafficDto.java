@@ -13,7 +13,7 @@ public class TrafficDto {
     private final List<TrafficJamDto> traffic;
 
     @JsonCreator
-    public TrafficDto(@JsonProperty("traffic") @JsonAlias("trafficjam") final List<TrafficJamDto> traffic) {
+    public TrafficDto(@JsonProperty("traffic") final List<TrafficJamDto> traffic) {
         this.traffic = traffic;
     }
 

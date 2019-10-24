@@ -14,11 +14,15 @@ import org.bees.optimizer.model.external.TrafficDto;
 import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Stack;
 
 @Slf4j
+@Service
+@Profile("bruteforce")
 public class BruteForceSolver implements Solver {
 
     private WebSocketHandler webSocketHandler;

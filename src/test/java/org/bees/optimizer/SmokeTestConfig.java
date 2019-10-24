@@ -1,5 +1,6 @@
 package org.bees.optimizer;
 
+import org.bees.optimizer.service.RouteSolver;
 import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,6 +16,6 @@ public class SmokeTestConfig {
 
     @Bean
     public Solver solver() {
-        return new BruteForceSolver();
+        return new RouteSolver();
     }
 }

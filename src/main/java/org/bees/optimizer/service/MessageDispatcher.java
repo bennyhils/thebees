@@ -19,10 +19,10 @@ import java.io.IOException;
 public class MessageDispatcher {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private SackSolver solver;
+    private Solver solver;
 
     @Autowired
-    public void setSolver(SackSolver solver) {
+    public void setSolver(Solver solver) {
         this.solver = solver;
     }
 

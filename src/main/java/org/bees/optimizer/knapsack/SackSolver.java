@@ -68,7 +68,7 @@ public class SackSolver implements Solver {
             log.info("point {} no money is {}", gotoPoint, contains);
 
             handler.sendCar(new GotoDto(gotoPoint, "sb0", contains));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn("error", e);
             throw new RuntimeException(e);
         }

@@ -14,10 +14,10 @@ import org.bees.optimizer.model.external.TrafficDto;
 import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Stack;
 
 @Slf4j
@@ -27,6 +27,10 @@ public class BruteForceSolver implements Solver {
 
     private WebSocketHandler webSocketHandler;
 
+    public BruteForceSolver(@Value("${org.bees.bruteforce-depth}") final int depth) {
+        this.depth = depth;
+    }
+
     @Autowired
     public void setWebSocketHandler(WebSocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
@@ -34,8 +38,11 @@ public class BruteForceSolver implements Solver {
 
     private String carName;
     private int elapsedTime = 0;
-    private int depth = 5;
+
+
+    private int depth;
     private int currentPoint = 0;
+    private long currentMoney = 0;
 
     private long[] money;
     private double[][] traffic;
@@ -68,6 +75,7 @@ public class BruteForceSolver implements Solver {
     @Override
     public void processArrive(ArriveDto arriveDto) {
         this.currentPoint = arriveDto.getPoint();
+        this.currentMoney = arriveDto.getCarSum();
         log.info("CarSum: {}", arriveDto.getCarSum());
     }
 
@@ -82,14 +90,13 @@ public class BruteForceSolver implements Solver {
     }
 
     private int calculateNextPoint(int curPoint) {
-        if (depth == 0) {
+        if (currentMoney > 900_000) {
             return 1;
         }
 
         Result result = fun(depth, new Stack<>(), curPoint);
         log.info("CurrentResult: {}", result);
         money[result.firstPoint] = 0;
-        --depth;
         this.currentPoint = result.firstPoint;
         return result.firstPoint;
     }

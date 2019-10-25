@@ -1,10 +1,7 @@
 package org.bees.optimizer;
 
-import org.bees.optimizer.service.RouteSolver;
-import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -13,9 +10,4 @@ import org.springframework.context.annotation.Import;
 public class SmokeTestConfig {
     @MockBean
     public WebSocketHandler webSocketHandler;
-
-    @Bean
-    public Solver solver() {
-        return new RouteSolver();
-    }
 }

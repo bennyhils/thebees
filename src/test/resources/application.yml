@@ -5,8 +5,9 @@ spring:
 
 org:
   bees:
-    gamma: 0.5
-    max_recursion_number: 10
+    bruteforce_depth: 5
+    gamma: 0.8
+    max_recursion_number: 3
 logging:
   level:
     org.bees.optimizer: DEBUG

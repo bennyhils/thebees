@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SmokeTestConfig.class)
-public class SmokeTest {
+public class Smoke10PointsTest {
 
     @Autowired
     private Solver solver;
@@ -34,11 +34,6 @@ public class SmokeTest {
     private WebSocketHandler mockWebSocketHandler;
 
     private final ObjectMapper mapper = new ObjectMapper();
-
-    @Test
-    public void truncRoutes() throws IOException {
-
-    }
 
     @Test
     public void smoke() throws IOException, InterruptedException {

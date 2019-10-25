@@ -2,14 +2,7 @@ package org.bees.optimizer.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.knapsack.SackSolver;
-import org.bees.optimizer.model.external.ArriveDto;
-import org.bees.optimizer.model.external.EndDto;
-import org.bees.optimizer.model.external.OverallSum;
-import org.bees.optimizer.model.external.PointsDto;
-import org.bees.optimizer.model.external.RoutesDto;
-import org.bees.optimizer.model.external.TokenDto;
-import org.bees.optimizer.model.external.TrafficDto;
+import org.bees.optimizer.model.external.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -4,9 +4,9 @@ server:
   port: 8888
   socket.endpoint: ws://172.30.9.50:3000/race
 org.bees:
-  teamname: "Some generic team name"
+  teamname: "Sack solver"
   gamma: 0.7
   max_recursion_number: 6
 spring:
   profiles:
-    active: markov
+    active: sack

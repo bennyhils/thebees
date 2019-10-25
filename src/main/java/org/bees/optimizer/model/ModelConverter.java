@@ -1,9 +1,6 @@
 package org.bees.optimizer.model;
 
-import org.bees.optimizer.model.external.PointsDto;
-import org.bees.optimizer.model.external.RoutesDto;
-import org.bees.optimizer.model.external.TokenDto;
-import org.bees.optimizer.model.external.TrafficDto;
+import org.bees.optimizer.model.external.*;
 import org.bees.optimizer.model.internal.Car;
 
 import java.util.Comparator;
@@ -34,6 +31,38 @@ public class ModelConverter {
             ans[t.getTo()][t.getFrom()] = t.getJam();
         });
 
+
+        return ans;
+    }
+
+    /**
+     * Конвертирует дто путей в двумерный массив int.
+     * Значения на главной диагонали равны -1 (невозможно доехать).
+     */
+    public static int[][] convertRoutes(List<RouteDto> routesDto) {
+        int size = routesDto
+                .stream()
+                .flatMap(r -> Stream.of(r.getFrom(), r.getTo()))
+                .max(Comparator.naturalOrder())
+                .get() + 1;
+
+        int[][] ans = new int[size][size];
+
+        routesDto.forEach(r -> {
+            int a = r.getFrom();
+            int b = r.getTo();
+            if (a == 0) {
+                ans[a][b] = r.getTime();
+                ans[b][a] = -1;
+            } else if (b == 0) {
+                ans[a][b] = -1;
+                ans[b][a] = r.getTime();
+            } else {
+                ans[a][b] = ans[b][a] = r.getTime();
+            }
+        });
+
+        IntStream.range(0, size).forEach(i -> ans[i][i] = -1);
 
         return ans;
     }

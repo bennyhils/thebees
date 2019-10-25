@@ -1,15 +1,7 @@
 package org.bees.optimizer.knapsack;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.model.external.ArriveDto;
-import org.bees.optimizer.model.external.GotoDto;
-import org.bees.optimizer.model.external.OverallSum;
-import org.bees.optimizer.model.external.PointsDto;
-import org.bees.optimizer.model.external.RouteDto;
-import org.bees.optimizer.model.external.RoutesDto;
-import org.bees.optimizer.model.external.TokenDto;
-import org.bees.optimizer.model.external.TrafficDto;
-import org.bees.optimizer.model.external.TrafficJamDto;
+import org.bees.optimizer.model.external.*;
 import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
-@Profile("sack")
+import static org.bees.optimizer.knapsack.graph.ShortPath.getShortestPath;
+
 @Component
 @Slf4j
+@Profile("sack")
 public class SackSolver implements Solver {
     private List<RouteDto> routesDto;
     private List<TrafficJamDto> trafficDtoList;
@@ -38,6 +31,7 @@ public class SackSolver implements Solver {
 
     private final int DEPTH = 2;
     private int depthCount = 0;
+    private int stepCount = 0;
 
     @Autowired
     private WebSocketHandler handler;
@@ -51,13 +45,11 @@ public class SackSolver implements Solver {
 
     @Override
     public void processTraffic(TrafficDto trafficDto) {
-        trafficDtoList = trafficDto.getTraffic();
+        trafficDtoList = trafficDto.getExtendedTraffic().getTraffic();
 
         if (cacher == null) {
             cacher = new Cacher(routesDto, pointsDto);
         }
-
-        invertDtosIfNeeded();
 
         if (depthCount % DEPTH == 0) {
             getNewRoute(trafficDtoList);
@@ -83,19 +75,6 @@ public class SackSolver implements Solver {
         }
     }
 
-    private void invertDtosIfNeeded() {
-        List<RouteDto> collect = routesDto.stream().filter(routeDto -> routeDto.getFrom() == gotoPoint).collect(Collectors.toList());
-        if (collect.isEmpty()) {
-            routesDto = routesDto
-                    .stream()
-                    .map(routeDto -> new RouteDto(routeDto.getTo(), routeDto.getFrom(), routeDto.getTime())).collect(Collectors.toList());
-
-            trafficDtoList = trafficDtoList
-                    .stream()
-                    .map(trafficJamDto -> new TrafficJamDto(trafficJamDto.getTo(), trafficJamDto.getFrom(), trafficJamDto.getJam())).collect(Collectors.toList());
-        }
-    }
-
     private void getNewRoute(List<TrafficJamDto> trafficDto) {
         depthCount = 0;
 
@@ -109,17 +88,24 @@ public class SackSolver implements Solver {
 
         nextPoint = find.getOne();
 
-        log.info("Got point " + nextPoint);
+        log.info("Got point " + nextPoint + " step count " + ++stepCount);
     }
 
     @Override
     public void processRoutes(RoutesDto routesDto) {
-        this.routesDto = routesDto.getRoutes();
+        this.routesDto = routesDto.getExtendedRoutes().getRoutes();
     }
 
     @Override
     public void processArrive(ArriveDto arriveDto) {
         this.arriveDto = arriveDto;
+        if(this.arriveDto.getCarSum() >= 300_000) {
+            List<String> shortestPath = getShortestPath(routesDto, gotoPoint, 1);
+
+            for (String s : shortestPath) {
+                handler.sendCar(new GotoDto(Integer.parseInt(s), "sb0"));
+            }
+        }
     }
 
     @Override
@@ -133,10 +119,7 @@ public class SackSolver implements Solver {
     }
 
     private List<SackPoint> getSackPoints(List<TrafficJamDto> trafficDto, PointExtractor pointExtractor, Stack<Integer> pointStack) {
-        List<SackPoint> sackPointList = pointExtractor.extractPoints(routesDto, pointsDto, trafficDto, DEPTH, pointStack);
-        for (SackPoint sackPoint : sackPointList) {
-            log.debug(sackPoint.toString());
-        }
+        List<SackPoint> sackPointList = pointExtractor.extractPoints(routesDto, pointsDto, trafficDto, DEPTH, pointStack, pointSet);
         return sackPointList;
     }
 }

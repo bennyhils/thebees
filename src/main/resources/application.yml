@@ -6,7 +6,7 @@ server:
 org.bees:
   teamname: "Some generic team name"
   gamma: 0.7
-  max_recursion_number: 10
+  max_recursion_number: 6
 spring:
   profiles:
     active: markov

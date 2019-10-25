@@ -91,7 +91,7 @@ public class WebSocketHandler implements
     public void onOpen(Session session) {
         log.info("Connected to server with session: {}", session);
         this.userSession = session;
-        this.userSession.setMaxTextMessageBufferSize(100000);
+        this.userSession.setMaxTextMessageBufferSize(1000000);
     }
 
     @OnClose

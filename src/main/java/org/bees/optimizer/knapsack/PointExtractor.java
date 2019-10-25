@@ -2,7 +2,10 @@ package org.bees.optimizer.knapsack;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.model.external.*;
+import org.bees.optimizer.model.external.PointDto;
+import org.bees.optimizer.model.external.PointsDto;
+import org.bees.optimizer.model.external.RouteDto;
+import org.bees.optimizer.model.external.TrafficJamDto;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,11 +22,12 @@ public class PointExtractor {
             PointsDto pointsDto,
             List<TrafficJamDto> trafficDto,
             int depth,
-            Stack<Integer> pointStack
+            Stack<Integer> pointStack,
+            Set<Integer> visitedPoints
     ) {
         return extractPointsInner(
                 getJamedRouteDtoList(
-                        filterByFirstPoint(routesDto, pointStack), trafficDto), pointsDto, new ArrayList<>(), depth, pointStack);
+                        filterByFirstPoint(routesDto, pointStack), trafficDto), pointsDto, new ArrayList<>(), depth, pointStack, visitedPoints);
     }
 
     private List<RouteDto> filterByFirstPoint(List<RouteDto> routesDto, Stack<Integer> pointStack) {
@@ -35,14 +39,18 @@ public class PointExtractor {
             PointsDto pointsDto,
             List<SackPoint> sackPointList,
             int depth,
-            Stack<Integer> pointStack) {
+            Stack<Integer> pointStack,
+            Set<Integer> visitedPoints) {
 
-        routesDto.stream().filter(routeDto -> !isValueInStack(routeDto.getTo(), pointStack)).forEach(routeDto -> {
+        routesDto.stream()
+                .filter(routeDto -> !isValueInStack(routeDto.getTo(), pointStack))
+                .filter(routeDto -> !visitedPoints.contains(routeDto.getTo())).
+                forEach(routeDto -> {
             PointDto pointDto = getPointDto(routeDto);
             sackPointMap.put(routeDto.getTo(), new SackPoint(Collections.singletonList(pointDto.getIndex()), pointDto.getMoney(), routeDto.getTime()));
             pointStack.add(routeDto.getTo());
 
-            doCreate(routesDto, pointsDto, pointStack, depth, sackPointList);
+            doCreate(routesDto, pointsDto, pointStack, depth, sackPointList, visitedPoints);
         });
 
         return sackPointList;
@@ -53,10 +61,10 @@ public class PointExtractor {
             PointsDto pointsDto,
             Stack<Integer> pointStack,
             int depth,
-            List<SackPoint> sackPointList) {
+            List<SackPoint> sackPointList, Set<Integer> visitedPoints) {
 
         if (depth > 1) {
-            extractPointsInner(routeDtoList, pointsDto, sackPointList, depth - 1, pointStack);
+            extractPointsInner(routeDtoList, pointsDto, sackPointList, depth - 1, pointStack, visitedPoints);
         } else {
             createPoint(pointStack, sackPointList);
         }

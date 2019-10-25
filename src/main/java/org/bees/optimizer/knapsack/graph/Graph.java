@@ -1,5 +1,7 @@
 package org.bees.optimizer.knapsack.graph;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+@Slf4j
 public class Graph {
     private Map<String, Node> nodes = new HashMap<String, Node>();
 
@@ -64,11 +67,7 @@ public class Graph {
                     temp.add(new PathNode(neighbor.name, currentPathNode.name, distance2root));
                 }
 
-                System.out.println("current node: " + currentPathNode.name);
-                System.out.println("PriorityQueue: " + temp);
-                System.out.println("Parents: " + parents);
-                System.out.println("Visited: " + visited);
-                System.out.println("");
+                log.warn("current node: " + currentNode.name);
             }
         }
         return null;

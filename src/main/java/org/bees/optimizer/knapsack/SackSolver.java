@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import static org.bees.optimizer.knapsack.graph.ShortPath.getShortestPath;
 
@@ -28,14 +25,15 @@ public class SackSolver implements Solver {
     private Cacher cacher;
     private SackPoint nextPoint;
     private Set<Integer> pointSet = new HashSet<Integer>();
+    private List<String> shortestPath = new ArrayList<>();
 
-    private final int DEPTH = 2;
+    private final int DEPTH = 3;
     private int depthCount = 0;
     private int stepCount = 0;
 
     @Autowired
     private WebSocketHandler handler;
-    private Integer gotoPoint = 40;
+    private Integer gotoPoint = 0;
 
 
     @Override
@@ -99,14 +97,11 @@ public class SackSolver implements Solver {
     @Override
     public void processArrive(ArriveDto arriveDto) {
         this.arriveDto = arriveDto;
-        if(this.arriveDto.getCarSum() >= 300_000) {
-            List<String> shortestPath = getShortestPath(routesDto, gotoPoint, 1);
-
-            for (String s : shortestPath) {
-                handler.sendCar(new GotoDto(Integer.parseInt(s), "sb0"));
-            }
+        if (this.arriveDto.getCarSum() >= 600_000) {
+            handler.sendCar(new GotoDto(1, "sb0"));
         }
     }
+
 
     @Override
     public void processOverallSum(OverallSum overallSum) {

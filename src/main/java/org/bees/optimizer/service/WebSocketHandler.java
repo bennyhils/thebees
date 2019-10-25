@@ -62,7 +62,6 @@ public class WebSocketHandler implements
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, new URI(endpoint));
             Thread.sleep(500);
-            teamName = "The Bees";
             registerOnServer(teamName);
         } catch (Exception e) {
             log.error("Got some error while trying to connect: ", e);
@@ -119,6 +118,7 @@ public class WebSocketHandler implements
     }
 
     private void registerOnServer(String teamName) throws IOException {
+        log.info("Registering as {}", teamName);
         LoginDto loginDto = new LoginDto(teamName);
 
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(loginDto));

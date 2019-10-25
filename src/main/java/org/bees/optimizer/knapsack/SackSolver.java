@@ -1,19 +1,28 @@
 package org.bees.optimizer.knapsack;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bees.optimizer.model.external.*;
+import org.bees.optimizer.model.external.ArriveDto;
+import org.bees.optimizer.model.external.GotoDto;
+import org.bees.optimizer.model.external.OverallSum;
+import org.bees.optimizer.model.external.PointsDto;
+import org.bees.optimizer.model.external.RouteDto;
+import org.bees.optimizer.model.external.RoutesDto;
+import org.bees.optimizer.model.external.TokenDto;
+import org.bees.optimizer.model.external.TrafficDto;
+import org.bees.optimizer.model.external.TrafficJamDto;
 import org.bees.optimizer.service.Solver;
 import org.bees.optimizer.service.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+@Profile("sack")
 @Component
 @Slf4j
 public class SackSolver implements Solver {

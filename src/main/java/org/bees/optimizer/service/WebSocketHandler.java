@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.bees.optimizer.model.external.EndDto;
 import org.bees.optimizer.model.external.GotoDto;
 import org.bees.optimizer.model.external.LoginDto;
 import org.bees.optimizer.model.external.ReconnectDto;
@@ -128,6 +129,7 @@ public class WebSocketHandler implements
 
     @SneakyThrows
     public void sendCar(GotoDto gotoDto) {
+        log.info("Car sent: {}", gotoDto);
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(gotoDto));
     }
 
@@ -151,5 +153,14 @@ public class WebSocketHandler implements
     public void onApplicationEvent(ApplicationReadyEvent event) {
         this.startConnection();
         new Thread(() -> this.startPolling()).start();
+    }
+
+    public void processEnd(EndDto endDto) {
+        if (endDto.isEnd()) {
+            log.info("Session closed by server.");
+            Thread curThread = Thread.currentThread();
+            Thread.getAllStackTraces().forEach((t, s) -> {if (!curThread.equals(t)) t.interrupt();});
+            this.userSession = null;
+        }
     }
 }

@@ -71,7 +71,8 @@ public class ModelGenerator {
     public static TrafficDto generateTraffic(
             int numPoints,
             double minVal,
-            double maxVal
+            double maxVal,
+            String carName
     ) {
         List<TrafficJamDto> generatedTraffic = new LinkedList<>();
         IntStream.rangeClosed(0, numPoints - 1).forEach(i -> {
@@ -79,7 +80,7 @@ public class ModelGenerator {
                 generatedTraffic.add(new TrafficJamDto(i, j, nextBoundedDouble(minVal, maxVal)));
             });
         });
-        return new TrafficDto(generatedTraffic);
+        return new TrafficDto(carName, generatedTraffic);
     }
 
     /**
@@ -89,7 +90,7 @@ public class ModelGenerator {
      * @return          дто с пробками
      */
     public static TrafficDto generateTraffic(int numPoints) {
-        return generateTraffic(numPoints, 1.0, 2.0);
+        return generateTraffic(numPoints, 1.0, 2.0, "sb0");
     }
 
     /**

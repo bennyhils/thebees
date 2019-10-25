@@ -45,6 +45,7 @@ public class Smoke40PointsTest {
 
         List<Long> collectedMoney = new ArrayList<>();
         AtomicLong moneyInBank = new AtomicLong();
+        AtomicLong elapsedTime = new AtomicLong();
 
         RoutesDto routes = mapper.readValue(routesJson, RoutesDto.class);
         TrafficDto traffic = mapper.readValue(trafficJson, TrafficDto.class);
@@ -81,7 +82,9 @@ public class Smoke40PointsTest {
                 solver.processArrive(new ArriveDto(
                         gotoDto.getPoint(),
                         "sb0",
-                        collectedTotal - moneyInBank.get()
+                        collectedTotal - moneyInBank.get(),
+                        0.0
+
                 ));
                 if (tickCount.decrementAndGet() != 0L) {
                     solver.processTraffic(traffic);

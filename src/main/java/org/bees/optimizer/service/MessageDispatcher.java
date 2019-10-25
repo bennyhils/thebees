@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.bees.optimizer.knapsack.SackSolver;
 import org.bees.optimizer.model.external.ArriveDto;
+import org.bees.optimizer.model.external.EndDto;
 import org.bees.optimizer.model.external.OverallSum;
 import org.bees.optimizer.model.external.PointsDto;
 import org.bees.optimizer.model.external.RoutesDto;
@@ -35,6 +36,15 @@ public class MessageDispatcher {
 
     public void dispatchMessage(String message) {
         log.info("Got message: {}", message);
+
+        try {
+            EndDto endDto = mapper.readValue(message, EndDto.class);
+            webSocketHandler.processEnd(endDto);
+            return;
+        } catch (IOException e) {
+            log.debug("It's not EndDto");
+        }
+
         try {
             ArriveDto arriveDto = mapper.readValue(message, ArriveDto.class);
             solver.processArrive(arriveDto);
@@ -73,7 +83,7 @@ public class MessageDispatcher {
             solver.processToken(tokenDto);
             return;
         } catch (IOException e) {
-            log.debug("It's not OverallSum");
+            log.debug("It's not TokenDto");
         }
 
         try {

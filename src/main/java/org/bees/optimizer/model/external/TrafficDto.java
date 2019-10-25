@@ -10,10 +10,15 @@ import java.util.stream.Stream;
 
 @Getter
 public class TrafficDto {
+    private final String carName;
     private final List<TrafficJamDto> traffic;
 
     @JsonCreator
-    public TrafficDto(@JsonProperty("traffic") final List<TrafficJamDto> traffic) {
+    public TrafficDto(
+            @JsonProperty("car") final String carName,
+            @JsonProperty("traffic") final List<TrafficJamDto> traffic
+    ) {
+        this.carName = carName;
         this.traffic = traffic;
     }
 
@@ -24,12 +29,13 @@ public class TrafficDto {
     }
 
     public TrafficDto getExtendedTraffic() {
-        return new TrafficDto(traffic
-                .stream()
-                .flatMap(t -> Stream.of(
-                        new TrafficJamDto(t.getFrom(), t.getTo(), t.getJam()),
-                        new TrafficJamDto(t.getTo(), t.getFrom(), t.getJam())
-                ))
-                .collect(Collectors.toList()));
+        return new TrafficDto(
+                carName,
+                traffic.stream()
+                       .flatMap(t -> Stream.of(
+                               new TrafficJamDto(t.getFrom(), t.getTo(), t.getJam()),
+                               new TrafficJamDto(t.getTo(), t.getFrom(), t.getJam())
+                       ))
+                       .collect(Collectors.toList()));
     }
 }

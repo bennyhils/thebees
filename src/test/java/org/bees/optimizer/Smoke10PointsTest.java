@@ -72,7 +72,8 @@ public class Smoke10PointsTest {
                 solver.processArrive(new ArriveDto(
                         gotoDto.getPoint(),
                         "sb0",
-                        collectedMoney.stream().reduce(0L, (a, b) -> a + b)
+                        collectedMoney.stream().reduce(0L, (a, b) -> a + b),
+                        0.0
                 ));
                 if (tickCount.decrementAndGet() != 0L) {
                     solver.processTraffic(traffic);

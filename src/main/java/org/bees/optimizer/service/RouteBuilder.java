@@ -88,11 +88,16 @@ public class RouteBuilder {
                 continue;
             }
 
-            if (remainCapacity >= points[j]) {
+            if (remainCapacity >= points[j] && points[j] != -1) {
                 double pointValue = valueFunction(trafficJams[currentPoint][j], routes[currentPoint][j], points[j]);
                 log.trace("value {} from current {} to point {}", pointValue, currentPoint, j);
 
+                long oldValue = points[currentPoint];
+                points[currentPoint] = -1;
+
                 Solution predictedPointSolution = getBestSolution(carCapacity,  j, remainCapacity - points[j], trafficJams, currentRecursion + 1);
+
+                points[currentPoint] = oldValue;
                 log.trace("predictedPointSolution {} from current {} to point {}", predictedPointSolution, currentPoint, j);
                 if (predictedPointSolution != null) {
                     pointValue = pointValue + Math.pow(gamma, currentRecursion) * predictedPointSolution.value;

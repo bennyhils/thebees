@@ -117,6 +117,7 @@ public class WebSocketHandler implements
         LoginDto loginDto = new LoginDto(teamName);
 
         this.userSession.getAsyncRemote().sendText(mapper.writeValueAsString(loginDto));
+        log.info("send login DTO to server {}", loginDto);
     }
 
     private void registerReconnect(String token) throws JsonProcessingException {

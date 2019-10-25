@@ -1,3 +1,4 @@
+#logging.level.org.bees.optimizer.service: trace
 spring:
   profiles:
     active: markov
@@ -5,8 +6,8 @@ spring:
 
 org:
   bees:
-    gamma: 0.5
-    max_recursion_number: 10
+    gamma: 0.8
+    max_recursion_number: 5
 logging:
   level:
     org.bees.optimizer: DEBUG

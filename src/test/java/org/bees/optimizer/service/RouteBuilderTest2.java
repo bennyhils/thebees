@@ -18,41 +18,32 @@ import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = RouteOptimizerConfig.class)
-public class RouteBuilderTest {
-    RouteBuilder routeBuilder;
+public class RouteBuilderTest2 {
+    RouteBuilder2 routeBuilder;
 
-    @Before
-    public void init() {
-        int numCount = 10;
-        int[][] routes = ModelConverter.convertRoutes(ModelGenerator.generateRoutes(numCount, 1, 10));
-        long[] points = ModelConverter.convertPoints(ModelGenerator.generatePoints(numCount, 1000, 1000000));
-        List<Car> cars = ModelGenerator.generateCars(1);
 
-        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
-    }
-
-    @Test
-    public void deepRecursion() {
-        int numCount = 10;
-        int[][] routes = ModelConverter.convertRoutes(ModelGenerator.generateRoutes(numCount, 1, 10));
-        long[] points = ModelConverter.convertPoints(ModelGenerator.generatePoints(numCount, 1000, 1000000));
-        List<Car> cars = ModelGenerator.generateCars(2);
-        double[][] traffic = ModelConverter.convertTraffic(ModelGenerator.generateTraffic(numCount));
-
-        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
-        Assert.assertNull(routeBuilder.getBestSolution(100, 0, 100, traffic, 4));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void differentSize() {
-        int numCount = 10;
-        int differentNumCount = 5;
-        int[][] routes = ModelConverter.convertRoutes(ModelGenerator.generateRoutes(numCount, 1, 10));
-        long[] points = ModelConverter.convertPoints(ModelGenerator.generatePoints(differentNumCount, 1000, 1000000));
-        List<Car> cars = ModelGenerator.generateCars(1);
-
-        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
-    }
+//    @Test
+//    public void deepRecursion() {
+//        int numCount = 10;
+//        int[][] routes = ModelConverter.convertRoutes(ModelGenerator.generateRoutes(numCount, 1, 10));
+//        long[] points = ModelConverter.convertPoints(ModelGenerator.generatePoints(numCount, 1000, 1000000));
+//        List<Car> cars = ModelGenerator.generateCars(2);
+//        double[][] traffic = ModelConverter.convertTraffic(ModelGenerator.generateTraffic(numCount));
+//
+//        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
+//        Assert.assertNull(routeBuilder.getBestSolution(100, 0, 100, traffic, 4));
+//    }
+//
+//    @Test(expected = IllegalArgumentException.class)
+//    public void differentSize() {
+//        int numCount = 10;
+//        int differentNumCount = 5;
+//        int[][] routes = ModelConverter.convertRoutes(ModelGenerator.generateRoutes(numCount, 1, 10));
+//        long[] points = ModelConverter.convertPoints(ModelGenerator.generatePoints(differentNumCount, 1000, 1000000));
+//        List<Car> cars = ModelGenerator.generateCars(1);
+//
+//        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
+//    }
 
     @Test
     public void getSolution() {
@@ -62,9 +53,9 @@ public class RouteBuilderTest {
         List<Car> cars = ModelGenerator.generateCars(2);
         double[][] traffic = ModelConverter.convertTraffic(ModelGenerator.generateTraffic(numCount));
 
-        routeBuilder = new RouteBuilder(routes, points, cars, 1, 3);
-        RouteBuilder.Solution solution = routeBuilder.getBestSolution(900000, 0, 900000, traffic, 0);
-        System.out.println(solution);
+        routeBuilder = new RouteBuilder2(routes, points, cars, 1, 3);
+        double sss  = routeBuilder.getBestSolution(900000, 0, 1000000, 0, 1000000, traffic, 0);
+        System.out.println(sss);
     }
 
     @Test
@@ -77,7 +68,7 @@ public class RouteBuilderTest {
         double gamma = 0.8;
         int maxRecursionLength = 3;
 
-        routeBuilder = new RouteBuilder(routes, points, cars, gamma, maxRecursionLength);
+        routeBuilder = new RouteBuilder2(routes, points, cars, gamma, maxRecursionLength);
 
         double[][] traffic = ModelConverter.convertTraffic(ModelGenerator.generateTraffic(numCount));
         List<State> models = routeBuilder.makeFirstDecision(traffic).stream().map(gotoDto -> {
@@ -96,7 +87,7 @@ public class RouteBuilderTest {
         for (int i = 0; i < 5; i++) {
             randomChange(traffic);
             models.forEach(model -> {
-                    GotoDto gotoDto = routeBuilder.makeDecision(model.gotoDto.getCarName(), model.gotoDto.getPoint(), model.remainingMoney, traffic);
+                    GotoDto gotoDto = routeBuilder.makeDecision(10000, model.gotoDto.getCarName(), model.gotoDto.getPoint(), model.remainingMoney, traffic);
                     model.gotoDto = gotoDto;
                 long capacity;
                 if (gotoDto.getPoint() == 0) {

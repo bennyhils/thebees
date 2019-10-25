@@ -66,7 +66,7 @@ public class RouteSolver implements Solver {
 
     @Override
     public synchronized void processTraffic(TrafficDto trafficDto) {
-        log.debug("process trafficdto isFirstExecution{} {}, time {}", isFirstExecution, trafficDto, System.currentTimeMillis() - timeBegin);
+        log.debug("process trafficdto isFirstExecution{} time {}", isFirstExecution, System.currentTimeMillis() - timeBegin);
         initIfReady();
         if (isFirstExecution) {
             routeBuilder.makeFirstDecision(ModelConverter.convertTraffic(trafficDto)).forEach(gotoDto -> server.sendCar(gotoDto));

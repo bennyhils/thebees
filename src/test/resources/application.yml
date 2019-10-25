@@ -1,3 +1,4 @@
+#logging.level.org.bees.optimizer.service: trace
 spring:
   profiles:
     active: markov

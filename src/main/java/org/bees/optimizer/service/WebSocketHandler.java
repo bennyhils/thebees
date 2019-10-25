@@ -12,6 +12,7 @@ import org.bees.optimizer.model.external.TokenDto;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,6 +42,8 @@ public class WebSocketHandler implements
 
     private MessageDispatcher messageDispatcher;
     private static final int RECONNECT_COUNT = 3;
+    @Value("${org.bees.teamname:The Bees}")
+    private String teamName;
 
     @Autowired
     public void setMessageDispatcher(MessageDispatcher messageDispatcher) {
@@ -59,7 +62,8 @@ public class WebSocketHandler implements
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, new URI(endpoint));
             Thread.sleep(500);
-            registerOnServer("The Bees");
+            teamName = "The Bees";
+            registerOnServer(teamName);
         } catch (Exception e) {
             log.error("Got some error while trying to connect: ", e);
         }

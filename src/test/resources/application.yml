@@ -3,6 +3,8 @@ spring:
   profiles:
     active: markov
 
+server:
+  socket.endpoint: ws://172.30.9.50:3000/race
 
 org:
   bees:

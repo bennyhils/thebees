@@ -2,10 +2,11 @@
 logging.level.org.bees.optimizer: debug
 server:
   port: 8888
-  socket.endpoint: ws://172.30.9.50:8080/race
+  socket.endpoint: ws://172.30.9.50:3000/race
 org.bees:
-  gamma: 0.8
-  max_recursion_number: 3
+  teamname: "The Bees"
+  gamma: 0.7
+  max_recursion_number: 10
 spring:
   profiles:
     active: markov

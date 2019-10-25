@@ -15,22 +15,22 @@ public class DataProvider {
     }
 
 
-     static String getCarsum() throws IOException {
+    static String getCarsum() throws IOException {
         InputStream resourceAsStream = loader.getResourceAsStream("json/carsum.json");
         return IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
     }
 
-     static String getRoutes() throws IOException {
+    static String getRoutes() throws IOException {
         InputStream resourceAsStream = loader.getResourceAsStream("json/routes.json");
         return IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
     }
 
-     static String getTraffic() throws IOException {
+    static String getTraffic() throws IOException {
         InputStream resourceAsStream = loader.getResourceAsStream("json/traffic.json");
         return IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
     }
 
-     static String getPoints() throws IOException {
+    static String getPoints() throws IOException {
         InputStream resourceAsStream = loader.getResourceAsStream("json/points.json");
         return IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
     }

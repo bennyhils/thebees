@@ -28,7 +28,7 @@ public class MessageDispatcher {
     }
 
     public void dispatchMessage(String message) {
-        log.info("Got message: {}", message);
+        log.trace("Got message: {}", message);
 
         try {
             EndDto endDto = mapper.readValue(message, EndDto.class);

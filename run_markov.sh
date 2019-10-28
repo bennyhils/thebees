@@ -1,1 +1,1 @@
-java -Dspring.profiles.active=markov -Dorg.bees.teamname='thebees01' -Dorg.bees.gamma=0.5 -Dserver.socket.endpoint=ws://172.30.9.50:8080/race -Dorg.bees.max_recursion_number=4 -jar target/route-optimizer-1.0-SNAPSHOT.jar
+java -Dspring.profiles.active=markov -Dorg.bees.teamname='thebees0804' -Dorg.bees.gamma=0.8 -Dserver.socket.endpoint=ws://172.30.9.50:8080/race -Dorg.bees.max_recursion_number=4 -jar target/route-optimizer-1.0-SNAPSHOT.jar
